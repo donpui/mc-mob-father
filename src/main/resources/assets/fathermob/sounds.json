@@ -1,0 +1,34 @@
+{
+  "entity.father.step": {
+    "sounds": [
+      {
+        "name": "fathermob:entity/father/step",
+        "stream": false
+      }
+    ]
+  },
+  "entity.father.ambient": {
+    "sounds": [
+      {
+        "name": "fathermob:entity/father/ambient",
+        "stream": false
+      }
+    ]
+  },
+  "entity.father.hurt": {
+    "sounds": [
+      {
+        "name": "fathermob:entity/father/hurt",
+        "stream": false
+      }
+    ]
+  },
+  "entity.father.death": {
+    "sounds": [
+      {
+        "name": "fathermob:entity/father/death",
+        "stream": false
+      }
+    ]
+  }
+}

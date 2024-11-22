@@ -1,0 +1,7 @@
+{
+  "entity.father": "Father",
+  "entity.father.step": "Father Step Sound",
+  "entity.father.ambient": "Father Ambient Sound",
+  "entity.father.hurt": "Father Hurt Sound",
+  "entity.father.death": "Father Death Sound"
+}
