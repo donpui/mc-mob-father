@@ -1,3 +1,4 @@
+
 #Client only settings, mostly things related to rendering
 [client]
 	#During block model baking, manually calculates the normal for all faces.
@@ -18,3 +19,6 @@
 	stabilizeDirectionGetNearest = true
 	#Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.
 	useCombinedDepthStencilAttachment = false
+	#[DEPRECATED] Does nothing anymore, IPv6 addresses will be compressed always
+	compressLanIPv6Addresses = true
+

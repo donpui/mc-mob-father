@@ -39,12 +39,9 @@ public class Father extends AbstractSkeleton {
 
         // Play ambient sound occasionally
         if (!this.level().isClientSide && this.isAlive()) {
-            System.out.println("[DEBUG] aiStep called for Father entity at " + this.getX() + ", " + this.getY() + ", " + this.getZ());
             if (ambientSoundCooldown > 0) {
                 ambientSoundCooldown--;
-                System.out.println("[DEBUG] Ambient sound cooldown: " + ambientSoundCooldown);
             } else if (this.random.nextInt(100) == 0) { // 1% chance per tick
-                System.out.println("[DEBUG] Playing ambient sound: " + ModSounds.FATHER_AMBIENT.get());
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         ModSounds.FATHER_AMBIENT.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
                 ambientSoundCooldown = 200; // Cooldown of 200 ticks (10 seconds)
@@ -55,17 +52,7 @@ public class Father extends AbstractSkeleton {
     @Override
     protected SoundEvent getStepSound() {
         // Fetch the sound event
-        SoundEvent stepSound = ModSounds.FATHER_STEP.get();
-
-        // Log debug information
-        if (stepSound != null) {
-            System.out.println("[DEBUG] getStepSound called. Returning: " + ModSounds.FATHER_STEP.getId());
-        } else {
-            System.out.println("[DEBUG] getStepSound called but stepSound is null!");
-        }
-
-        // Return the fetched sound event
-        return stepSound;
+        return ModSounds.FATHER_STEP.get();
     }
 
     @Override

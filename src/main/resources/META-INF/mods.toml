@@ -5,10 +5,19 @@ license = "MIT"
 modId = "fathermob"
 version = "1.0.0"
 displayName = "FatherMob"
-description = "A mod that replaces skeletons with apple-throwing skeletons."
+description = "A mod that replaces skeletons with snowball throughing"
 
 [[dependencies.fathermob]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.20.6,)"
+versionRange = "[1.20.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.fathermob]]
+modId = "forge"
+mandatory = true
+versionRange = "[47.2,)"
+ordering = "AFTER"
+side = "BOTH"
 
