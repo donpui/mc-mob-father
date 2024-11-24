@@ -15,6 +15,7 @@ public class FatherMob {
         // Register entities
         ModEntities.ENTITIES.register(modEventBus);
         ModSounds.SOUND_EVENTS.register(modEventBus);
+        //ModDamageSources.DAMAGE_TYPES.register(modEventBus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {

@@ -6,29 +6,44 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.AbstractSkeleton;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.damagesource.DamageSource;
 
-
-public class Father extends AbstractSkeleton {
-
+public class Father extends AbstractSkeleton implements RangedAttackMob {
+    // Don't initialize bookAttackGoal as a field, create it in registerGoals
     private int ambientSoundCooldown = 0;
 
     public Father(EntityType<? extends AbstractSkeleton> entityType, Level level) {
         super(entityType, level);
+        this.clearDefaultEquipment();
+        this.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.BOOK));
+    }
 
-        // Remove default equipment by setting hands empty
-        this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        this.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+    @Override
+    protected void registerGoals() {
+        // Create the bookAttackGoal here instead of as a field
+        RangedAttackGoal bookAttackGoal = new RangedAttackGoal(this, 1.0D, 20, 15.0F);
+
+        this.goalSelector.addGoal(1, new FloatGoal(this));
+        this.goalSelector.addGoal(2, new RestrictSunGoal(this));
+        this.goalSelector.addGoal(3, new FleeSunGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, bookAttackGoal);
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, net.minecraft.world.entity.player.Player.class, 8.0F));
+        this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, net.minecraft.world.entity.player.Player.class, true));
     }
 
     private void clearDefaultEquipment() {
-        // Explicitly clear equipment slots for main hand and off-hand
         this.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         this.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
     }
@@ -37,27 +52,24 @@ public class Father extends AbstractSkeleton {
     public void aiStep() {
         super.aiStep();
 
-        // Play ambient sound occasionally
         if (!this.level().isClientSide && this.isAlive()) {
             if (ambientSoundCooldown > 0) {
                 ambientSoundCooldown--;
-            } else if (this.random.nextInt(100) == 0) { // 1% chance per tick
+            } else if (this.random.nextInt(100) == 0) {
                 this.level().playSound(null, this.getX(), this.getY(), this.getZ(),
                         ModSounds.FATHER_AMBIENT.get(), SoundSource.HOSTILE, 1.0F, 1.0F);
-                ambientSoundCooldown = 200; // Cooldown of 200 ticks (10 seconds)
+                ambientSoundCooldown = 200;
             }
         }
     }
 
     @Override
     protected SoundEvent getStepSound() {
-        // Fetch the sound event
         return ModSounds.FATHER_STEP.get();
     }
 
     @Override
     protected boolean isSunBurnTick() {
-        // Prevent the Father mob from burning in sunlight
         return false;
     }
 
@@ -71,40 +83,32 @@ public class Father extends AbstractSkeleton {
         return ModSounds.FATHER_DEATH.get();
     }
 
-
     @Override
     protected SoundEvent getAmbientSound() {
-        // Optional: Return null to disable the default ambient sound
         return null;
     }
 
     @Override
     public void performRangedAttack(net.minecraft.world.entity.LivingEntity target, float distanceFactor) {
-        // Create an apple projectile (replacing the default arrow)
-        ThrowableItemProjectile appleProjectile = new ThrowableItemProjectile(EntityType.SNOWBALL, this.getCommandSenderWorld()) {
-            @Override
-            protected Item getDefaultItem() {
-                return Items.APPLE; // Use an apple as the projectile
-            }
-        };
+        if (!this.level().isClientSide) {
+            BookAttack bookAttack = new BookAttack(this.level(), this);
 
-        // Set the position and trajectory of the apple
-        appleProjectile.setPos(this.getX(), this.getEyeY() - 0.1, this.getZ());
-        double dx = target.getX() - this.getX();
-        double dy = (target.getEyeY() - 1) - appleProjectile.getY();
-        double dz = target.getZ() - this.getZ();
-        double distance = Math.sqrt(dx * dx + dz * dz);
-        appleProjectile.shoot(dx, dy + distance * 0.2, dz, 1.5F, 1.0F);
+            double dx = target.getX() - this.getX();
+            double dy = target.getEyeY() - 1.1D - bookAttack.getY();
+            double dz = target.getZ() - this.getZ();
+            double distance = Math.sqrt(dx * dx + dz * dz);
 
-        // Add the apple projectile to the world
-        this.getCommandSenderWorld().addFreshEntity(appleProjectile);
+            bookAttack.shoot(dx, dy + distance * 0.2D, dz, 1.6F, 1.0F);
+
+            this.level().addFreshEntity(bookAttack);
+        }
     }
 
     public static AttributeSupplier.Builder createAttributes() {
-        // Define the Father mob's attributes
         return AbstractSkeleton.createAttributes()
-                .add(Attributes.MAX_HEALTH, 20.0)      // Set max health to 20
-                .add(Attributes.MOVEMENT_SPEED, 0.25) // Set movement speed
-                .add(Attributes.ATTACK_DAMAGE, 1.0);  // Set melee attack damage
+                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MOVEMENT_SPEED, 0.35)
+                .add(Attributes.ATTACK_DAMAGE, 0.2)
+                .add(Attributes.FOLLOW_RANGE, 50.0);
     }
 }
