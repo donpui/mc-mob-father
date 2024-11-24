@@ -29,7 +29,7 @@ public class Father extends AbstractSkeleton implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         // Create the bookAttackGoal here instead of as a field
-        RangedAttackGoal bookAttackGoal = new RangedAttackGoal(this, 1.0D, 20, 15.0F);
+        RangedAttackGoal bookAttackGoal = new RangedAttackGoal(this, 1.0D, 60, 15.0F);
 
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new RestrictSunGoal(this));
@@ -88,6 +88,7 @@ public class Father extends AbstractSkeleton implements RangedAttackMob {
         return null;
     }
 
+
     @Override
     public void performRangedAttack(net.minecraft.world.entity.LivingEntity target, float distanceFactor) {
         if (!this.level().isClientSide) {
@@ -98,7 +99,7 @@ public class Father extends AbstractSkeleton implements RangedAttackMob {
             double dz = target.getZ() - this.getZ();
             double distance = Math.sqrt(dx * dx + dz * dz);
 
-            bookAttack.shoot(dx, dy + distance * 0.2D, dz, 1.6F, 1.0F);
+            bookAttack.shoot(dx, dy + distance * 0.2D, dz, 0.8F, 1.0F);
 
             this.level().addFreshEntity(bookAttack);
         }

@@ -16,6 +16,8 @@ import net.minecraftforge.network.NetworkHooks;
 public class BookAttack extends ThrowableItemProjectile {
     public BookAttack(EntityType<? extends ThrowableItemProjectile> entityType, Level level) {
         super(entityType, level);
+
+        this.setDeltaMovement(this.getDeltaMovement().scale(0.05));
     }
 
     public BookAttack(Level level, LivingEntity shooter) {
@@ -84,21 +86,31 @@ public class BookAttack extends ThrowableItemProjectile {
     }
 
     @Override
+    public void setOwner(Entity owner) {
+        super.setOwner(owner);
+        if (owner != null) {
+            // Slow down the velocity by scaling it
+            double factor = 0.05; // Adjust to your liking (e.g., 0.5 means half speed)
+            this.setDeltaMovement(this.getDeltaMovement().scale(factor));
+        }
+    }
+
+    @Override
     public void tick() {
         super.tick();
 
         // Optional: Add trailing particles as the book moves
-        if (this.level().isClientSide) {
-            this.level().addParticle(
-                    net.minecraft.core.particles.ParticleTypes.ITEM_SNOWBALL,
-                    this.getX(),
-                    this.getY(),
-                    this.getZ(),
-                    0.0D,
-                    0.0D,
-                    0.0D
-            );
-        }
+//        if (this.level().isClientSide) {
+//            this.level().addParticle(
+//                    net.minecraft.core.particles.ParticleTypes.ITEM_SNOWBALL,
+//                    this.getX(),
+//                    this.getY(),
+//                    this.getZ(),
+//                    0.0D,
+//                    0.0D,
+//                    0.0D
+//            );
+//        }
     }
 
     @Override

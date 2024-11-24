@@ -1,7 +1,7 @@
 
 # Father Mob mod
 
-Based on skeleton, throws snowball and encourage to go do homework
+Based on skeleton, throws snowball and encourage to go do homework and attack with the book
 
 ## Basic commands
 
