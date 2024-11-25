@@ -5,7 +5,8 @@ build/
 !**/src/test/**/build/
 
 
-run/*
+run/
+run-data/
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
