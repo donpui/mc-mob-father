@@ -88,6 +88,15 @@ public class Father extends AbstractSkeleton implements RangedAttackMob {
         return null;
     }
 
+    @Override
+    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+        super.dropCustomDeathLoot(source, looting, recentlyHit);
+
+        // Add 10 bookshelf items to the drops
+        for (int i = 0; i < 10; i++) {
+            this.spawnAtLocation(Items.BOOKSHELF);
+        }
+    }
 
     @Override
     public void performRangedAttack(net.minecraft.world.entity.LivingEntity target, float distanceFactor) {
@@ -105,9 +114,11 @@ public class Father extends AbstractSkeleton implements RangedAttackMob {
         }
     }
 
+
+
     public static AttributeSupplier.Builder createAttributes() {
         return AbstractSkeleton.createAttributes()
-                .add(Attributes.MAX_HEALTH, 200.0)
+                .add(Attributes.MAX_HEALTH, 50.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.35)
                 .add(Attributes.ATTACK_DAMAGE, 0.2)
                 .add(Attributes.FOLLOW_RANGE, 50.0);

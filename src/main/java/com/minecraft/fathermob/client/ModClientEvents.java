@@ -22,4 +22,6 @@ public class ModClientEvents {
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(FatherModel.LAYER_LOCATION, FatherModel::createBodyLayer);
     }
+
+    
 }
